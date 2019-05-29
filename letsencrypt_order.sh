@@ -70,11 +70,11 @@ if [ -f "$apache_config/vhost.map" ]; then
                                             chmod 755 $LEDIR
                                             cp /etc/letsencrypt/live/$wanted_cert/fullchain.pem $LEDIR/$wanted_cert.crt
                                             cp /etc/letsencrypt/live/$wanted_cert/privkey.pem $LEDIR/$wanted_cert.key
-                                            chown www-data:www-data $LEDIR/*
+                                            chown apache:apache $LEDIR/*
                                         else
                                             cp /etc/letsencrypt/live/$wanted_cert/fullchain.pem $LEDIR/$wanted_cert.crt
                                             cp /etc/letsencrypt/live/$wanted_cert/privkey.pem $LEDIR/$wanted_cert.key
-                                            chown www-data:www-data $LEDIR/*
+                                            chown apache:apache $LEDIR/*
                                         fi
 
                                         #Upload certificate to F5
@@ -108,11 +108,11 @@ if [ -f "$iis_config/applicationHost.config" ]; then
                                             chmod 755 $LEDIR
                                             cp /etc/letsencrypt/live/$wanted_cert/fullchain.pem $LEDIR/$wanted_cert.crt
                                             cp /etc/letsencrypt/live/$wanted_cert/privkey.pem $LEDIR/$wanted_cert.key
-                                            chown www-data:www-data $LEDIR/*
+                                            chown apache:apache $LEDIR/*
                                         else
                                             cp /etc/letsencrypt/live/$wanted_cert/fullchain.pem $LEDIR/$wanted_cert.crt
                                             cp /etc/letsencrypt/live/$wanted_cert/privkey.pem $LEDIR/$wanted_cert.key
-                                            chown www-data:www-data $LEDIR/*
+                                            chown apache:apache $LEDIR/*
                                         fi
 
                                         #Upload certificate to F5
