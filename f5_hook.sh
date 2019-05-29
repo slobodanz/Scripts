@@ -57,7 +57,7 @@ case $OPERATION in
           CERT=`$CURL_GET/sys/file/ssl-cert/~Common~"$DOMAIN".crt | jq '.name'`
           #if exists, delete and upload again
           JSON_CERT="'"{\"command\":\"install\",\"name\":\"$DOMAIN.crt\",\"from-url\":\"${config[apache_url]}/$DOMAIN/$DOMAIN.crt\"}"'"
-          ADD_CERT="$CURL -X POST ${config[f5_url]}/mgmt/tm/sys/crypto/cert -d $JSON_CERT"
+          ADD_CERT="$CURL -X POST ${config[f5_url]}/mgmt/tm/sys/crypto/cert -d $JSON_CERT | jq '.' | tee -a $LOGFILE"
 
           if [ $CERT == \"$DOMAIN".crt\"" ]; then
              echo "Certificate $DOMAIN.crt already uploaded on F5." | tee -a $LOGFILE
@@ -71,7 +71,7 @@ case $OPERATION in
           KEY=`$CURL_GET/sys/file/ssl-key/~Common~"$DOMAIN".key | jq '.name'`
           #if exists, delete and upload again
           JSON_KEY="'"{\"command\":\"install\",\"name\":\"$DOMAIN.key\",\"from-url\":\"${config[apache_url]}/$DOMAIN/$DOMAIN.key\"}"'"
-          ADD_KEY="$CURL -X POST ${config[f5_url]}/mgmt/tm/sys/crypto/key -d $JSON_KEY"
+          ADD_KEY="$CURL -X POST ${config[f5_url]}/mgmt/tm/sys/crypto/key -d $JSON_KEY | jq '.' | tee -a $LOGFILE"
 
           if [ $KEY == \"$DOMAIN".key\"" ]; then
              echo "Key $DOMAIN.key already uploaded on F5." | tee -a $LOGFILE
@@ -87,7 +87,7 @@ case $OPERATION in
           else
              echo "SSL profile $DOMAIN not created. Creating..." | tee -a $LOGFILE
              JSON_SSL="'"{\"name\":\"$DOMAIN\",\"cert\":\"$DOMAIN.crt\",\"key\":\"$DOMAIN.key\"}"'"
-             ADD_SSL="$CURL -X POST ${config[f5_url]}/mgmt/tm/ltm/profile/client-ssl -d $JSON_SSL"
+             ADD_SSL="$CURL -X POST ${config[f5_url]}/mgmt/tm/ltm/profile/client-ssl -d $JSON_SSL | jq '.' | tee -a $LOGFILE"
              eval $ADD_SSL
           fi
 
@@ -98,7 +98,7 @@ case $OPERATION in
           else
              echo "SSL profile $DOMAIN not assigned to ${config[v_server]}. Configuring..." | tee -a $LOGFILE
              JSON_VSRV="'"{\"context\":\"clientside\",\"name\":\"$DOMAIN\"}"'"
-             ASSIGN_SSL="$CURL -X POST ${config[f5_url]}/mgmt/tm/ltm/virtual/~Common~${config[v_server]}/profiles -d $JSON_VSRV"
+             ASSIGN_SSL="$CURL -X POST ${config[f5_url]}/mgmt/tm/ltm/virtual/~Common~${config[v_server]}/profiles -d $JSON_VSRV | jq '.' | tee -a $LOGFILE"
              eval $ASSIGN_SSL
           fi
           ;;
