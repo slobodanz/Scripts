@@ -5,11 +5,13 @@ CERTBOT_VALIDATION='143132423412'
 CERTBOT_TOKEN='afasdfasdf'
 
 
+WWW="www."
 MAPS="/storage/configuration/maps"
-USER=`grep $CERTBOT_DOMAIN $MAPS/users.map | awk '{print $2}'`
+DOMAIN=${CERTBOT_DOMAIN#$WWW}
+USER=`grep $DOMAIN $MAPS/users.map | awk '{print $2}'`
 LAST=`echo -n $USER | tail -c 2`
 
-ROOTDIR="/storage/content/$LAST/$USER/$CERTBOT_DOMAIN/public_html"
+ROOTDIR="/storage/content/$LAST/$USER/$DOMAIN/public_html"
 
 if [ -d "$ROOTDIR" ]; then
   echo "mkdir -p $ROOTDIR/.well-known/acme-challenge"
