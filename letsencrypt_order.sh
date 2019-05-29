@@ -64,7 +64,7 @@ if [ -f "$apache_config/vhost.map" ]; then
                                         echo "wanted cert: $wanted_cert"
                                         echo "www cert: $wanted_wwwcert"
                                         echo "certbot certonly --manual --manual-auth-hook $le_auth --manual-cleanup-hook $le_cleanup -d $wanted_cert -d $wanted_wwwcert --non-interactive --agree-tos --email noreply@hosting.telia.com --manual-public-ip-logging-ok "
-										echo "$f5hook add $wanted_cert"
+					echo "$f5hook add $wanted_cert"
                                 fi
                 fi
         done
@@ -88,7 +88,7 @@ if [ -f "$iis_config/applicationHost.config" ]; then
                                         echo "wanted cert: $wanted_cert"
                                         echo "www cert: $wanted_wwwcert"
                                         echo "certbot certonly --manual --manual-auth-hook $le_auth --manual-cleanup-hook $le_cleanup -d $wanted_cert -d $wanted_wwwcert --non-interactive --agree-tos --email noreply@hosting.telia.com --manual-public-ip-logging-ok "
-										echo "$f5hook add $wanted_cert"
+					echo "$f5hook add $wanted_cert"
                                 fi
                 fi
         done
