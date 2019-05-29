@@ -60,11 +60,25 @@ if [ -f "$apache_config/vhost.map" ]; then
                         ip2="$(dig +short $wanted_cert | head -1)"
 
                                 if  [ -n "$ip1" ] && [ "$(in_ato_nets $ip1)" = yes ] && [ -n "$ip2" ] && [ "$(in_ato_nets $ip2)" = yes ] ; then
-                                        echo "$wanted_cert_path/$desired"
-                                        echo "wanted cert: $wanted_cert"
-                                        echo "www cert: $wanted_wwwcert"
-                                        echo "certbot certonly --manual --manual-auth-hook $le_auth --manual-cleanup-hook $le_cleanup -d $wanted_cert -d $wanted_wwwcert --non-interactive --agree-tos --email noreply@hosting.telia.com --manual-public-ip-logging-ok "
-					echo "$f5hook add $wanted_cert"
+
+                                        #Order actual certificate
+                                        certbot certonly --manual --manual-auth-hook $le_auth --manual-cleanup-hook $le_cleanup -d $wanted_cert -d $wanted_wwwcert --non-interactive --agree-tos --email noreply@hosting.telia.com --manual-public-ip-logging-ok
+
+                                        LEDIR="/var/www/html/le_cert/$wanted_cert"
+                                        if [ ! -d "$LEDIR" ]; then
+                                            mkdir -p $LEDIR
+                                            chmod 755 $LEDIR
+                                            cp /etc/letsencrypt/live/$wanted_cert/fullchain.pem $LEDIR/$wanted_cert.crt
+                                            cp /etc/letsencrypt/live/$wanted_cert/privkey.pem $LEDIR/$wanted_cert.key
+                                            chown www-data:www-data $LEDIR/*
+                                        else
+                                            cp /etc/letsencrypt/live/$wanted_cert/fullchain.pem $LEDIR/$wanted_cert.crt
+                                            cp /etc/letsencrypt/live/$wanted_cert/privkey.pem $LEDIR/$wanted_cert.key
+                                            chown www-data:www-data $LEDIR/*
+                                        fi
+
+                                        #Upload certificate to F5
+                                        $f5hook add $wanted_cert
                                 fi
                 fi
         done
@@ -84,11 +98,25 @@ if [ -f "$iis_config/applicationHost.config" ]; then
                         ip1="$(dig +short $wanted_wwwcert | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b')"
                         ip2="$(dig +short $wanted_cert | head -1)"
                                 if  [ -n "$ip1" ] && [ "$(in_ato_nets $ip1)" = yes ] && [ -n "$ip2" ] && [ "$(in_ato_nets $ip2)" = yes ] ; then
-                                        echo "$wanted_cert_path/$desired"
-                                        echo "wanted cert: $wanted_cert"
-                                        echo "www cert: $wanted_wwwcert"
-                                        echo "certbot certonly --manual --manual-auth-hook $le_auth --manual-cleanup-hook $le_cleanup -d $wanted_cert -d $wanted_wwwcert --non-interactive --agree-tos --email noreply@hosting.telia.com --manual-public-ip-logging-ok "
-					echo "$f5hook add $wanted_cert"
+
+                                        #Order actual certificate
+                                        certbot certonly --manual --manual-auth-hook $le_auth --manual-cleanup-hook $le_cleanup -d $wanted_cert -d $wanted_wwwcert --non-interactive --agree-tos --email noreply@hosting.telia.com --manual-public-ip-logging-ok
+
+                                        LEDIR="/var/www/html/le_cert/$wanted_cert"
+                                        if [ ! -d "$LEDIR" ]; then
+                                            mkdir -p $LEDIR
+                                            chmod 755 $LEDIR
+                                            cp /etc/letsencrypt/live/$wanted_cert/fullchain.pem $LEDIR/$wanted_cert.crt
+                                            cp /etc/letsencrypt/live/$wanted_cert/privkey.pem $LEDIR/$wanted_cert.key
+                                            chown www-data:www-data $LEDIR/*
+                                        else
+                                            cp /etc/letsencrypt/live/$wanted_cert/fullchain.pem $LEDIR/$wanted_cert.crt
+                                            cp /etc/letsencrypt/live/$wanted_cert/privkey.pem $LEDIR/$wanted_cert.key
+                                            chown www-data:www-data $LEDIR/*
+                                        fi
+
+                                        #Upload certificate to F5
+                                        $f5hook add $wanted_cert
                                 fi
                 fi
         done
