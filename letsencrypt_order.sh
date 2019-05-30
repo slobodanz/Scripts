@@ -56,7 +56,7 @@ if [ -f "$apache_config/vhost.map" ]; then
                 wanted_wwwcert=$(echo "$cert" | cut -d " " -f 2 )
                 desired=$(echo "$cert" | cut -d " " -f 1 )
 
-                if [ ! -d `echo "$wanted_cert_path/$desired"` ]; then
+                if [ ! -d `echo "$wanted_cert_path/$desired"` ] && [ ! -d `echo "$premium_cert_path/$desired"` ]; then
                         ip1="$(dig +short $wanted_wwwcert | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b')"
                         ip2="$(dig +short $wanted_cert | head -1)"
 
@@ -95,7 +95,7 @@ if [ -f "$iis_config/applicationHost.config" ]; then
                 wanted_wwwcert=$(echo "$cert" | cut -d " " -f 2 )
                 desired=$(echo "$cert" | cut -d " " -f 1 )
 
-                if [ ! -d `echo "$wanted_cert_path/$desired"` ]; then
+                if [ ! -d `echo "$wanted_cert_path/$desired"` ] && [ ! -d `echo "$premium_cert_path/$desired"` ]; then
                         ip1="$(dig +short $wanted_wwwcert | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b')"
                         ip2="$(dig +short $wanted_cert | head -1)"
                                 if  [ -n "$ip1" ] && [ "$(in_ato_nets $ip1)" = yes ] && [ -n "$ip2" ] && [ "$(in_ato_nets $ip2)" = yes ] ; then
