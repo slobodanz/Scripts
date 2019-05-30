@@ -65,8 +65,8 @@ while read domain; do
                     OUT=$? #0 if renew is succesfull, 1 if it's failed
 
                     if [ $OUT -eq 0 ];then
-                        echo "$f5hook remove $wanted_cert"
-                        echo "$f5hook add $wanted_cert"
+                        $f5hook remove letsencrypt $wanted_cert
+                        $f5hook add letsencrypt $wanted_cert
                         rm /var/log/letsencrypt/letsencrypt.log
                         find /var/log/letsencrypt/ -size 0 -delete
 
@@ -76,7 +76,7 @@ while read domain; do
                     echo "Certificate $wanted_cert not hosted on Telia !"
                     echo "Revoking.."
                     echo "certbot revoke -d $wanted_cert --cert-path /etc/letsencrypt/live/${wanted_cert}/cert.pem --non-interactive"
-                    echo "$f5hook remove $wanted_cert"
+                    $f5hook remove letsencrypt $wanted_cert
                     ((revoked_cert++))
                 fi
         fi
