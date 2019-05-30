@@ -3,6 +3,7 @@
 ATO_NETS="62.20.146.242/32"
 certbot="/usr/bin/certbot"
 wanted_cert_path="/etc/letsencrypt/live"
+premium_cert_path="/appdir/atomia/ssl/premium_certificates"
 apache_config="/storage/configuration/maps"
 iis_config="/storage/configuration/iisv2"
 le_auth=/appdir/atomia/le_auth.sh
