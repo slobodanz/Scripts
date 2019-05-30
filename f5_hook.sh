@@ -23,6 +23,19 @@ DOMAIN=$2
 TIME=`date '+%Y-%m-%d %H:%M:%S'`
 LOGFILE=${config[log_file]}
 
+case $3 in
+	letsencrypt)
+		DOWNLOAD_URL=${config[apache_url_letsencrypt]}
+	;;
+	premium)
+		DOWNLOAD_URL=${config[apache_url_premium]}
+	;;
+	*)
+		echo "Wrong certificate type used"
+		exit 1
+	;;
+esac
+
 echo "" | tee -a $LOGFILE
 echo "Timestamp: $TIME" | tee -a $LOGFILE
 echo "Action: $OPERATION for domain: $DOMAIN" | tee -a $LOGFILE
@@ -40,13 +53,13 @@ fi
 case $OPERATION in
         add)
           #validate certificate and key
-          if  ! wget --spider ${config[apache_url]}/$DOMAIN/$DOMAIN.crt 2>/dev/null; then
-            echo "Certificate does not exists on remote webserver ${config[apache_url]}/$DOMAIN/$DOMAIN.crt. Exit!" | tee -a $LOGFILE
+          if  ! wget --spider $DOWNLOAD_URL/$DOMAIN/$DOMAIN.crt 2>/dev/null; then
+            echo "Certificate does not exists on remote webserver $DOWNLOAD_URL/$DOMAIN/$DOMAIN.crt. Exit!" | tee -a $LOGFILE
             exit 1
           fi
 
-          if  ! wget --spider ${config[apache_url]}/$DOMAIN/$DOMAIN.key 2>/dev/null; then
-             echo "Private key does not exists on remote webserver ${config[apache_url]}/$DOMAIN/$DOMAIN.key. Exit!" | tee -a $LOGFILE
+          if  ! wget --spider $DOWNLOAD_URL/$DOMAIN/$DOMAIN.key 2>/dev/null; then
+             echo "Private key does not exists on remote webserver $DOWNLOAD_URL/$DOMAIN/$DOMAIN.key. Exit!" | tee -a $LOGFILE
              exit 1
           fi
 
@@ -56,7 +69,7 @@ case $OPERATION in
           #Manage certificate
           CERT=`$CURL_GET/sys/file/ssl-cert/~Common~"$DOMAIN".crt | jq '.name'`
           #if exists, delete and upload again
-          JSON_CERT="'"{\"command\":\"install\",\"name\":\"$DOMAIN.crt\",\"from-url\":\"${config[apache_url]}/$DOMAIN/$DOMAIN.crt\"}"'"
+          JSON_CERT="'"{\"command\":\"install\",\"name\":\"$DOMAIN.crt\",\"from-url\":\"$DOWNLOAD_URL/$DOMAIN/$DOMAIN.crt\"}"'"
           ADD_CERT="$CURL -X POST ${config[f5_url]}/mgmt/tm/sys/crypto/cert -d $JSON_CERT | jq '.' | tee -a $LOGFILE"
 
           if [ $CERT == \"$DOMAIN".crt\"" ]; then
@@ -70,7 +83,7 @@ case $OPERATION in
           #Manage keys
           KEY=`$CURL_GET/sys/file/ssl-key/~Common~"$DOMAIN".key | jq '.name'`
           #if exists, delete and upload again
-          JSON_KEY="'"{\"command\":\"install\",\"name\":\"$DOMAIN.key\",\"from-url\":\"${config[apache_url]}/$DOMAIN/$DOMAIN.key\"}"'"
+          JSON_KEY="'"{\"command\":\"install\",\"name\":\"$DOMAIN.key\",\"from-url\":\"$DOWNLOAD_URL/$DOMAIN/$DOMAIN.key\"}"'"
           ADD_KEY="$CURL -X POST ${config[f5_url]}/mgmt/tm/sys/crypto/key -d $JSON_KEY | jq '.' | tee -a $LOGFILE"
 
           if [ $KEY == \"$DOMAIN".key\"" ]; then
@@ -125,11 +138,11 @@ case $OPERATION in
           `$CURL -X DELETE ${config[f5_url]}/mgmt/tm/sys/file/ssl-cert/~Common~"$DOMAIN".crt`
 
           echo "Create certificate, private key, ssl profile for $DOMAIN" | tee -a $LOGFILE
-          JSON_CERT="'"{\"command\":\"install\",\"name\":\"$DOMAIN.crt\",\"from-url\":\"${config[apache_url]}/$DOMAIN/$DOMAIN.crt\"}"'"
+          JSON_CERT="'"{\"command\":\"install\",\"name\":\"$DOMAIN.crt\",\"from-url\":\"$DOWNLOAD_URL/$DOMAIN/$DOMAIN.crt\"}"'"
           ADD_CERT="$CURL -X POST ${config[f5_url]}/mgmt/tm/sys/crypto/cert -d $JSON_CERT"
           eval $ADD_CERT
 
-          JSON_KEY="'"{\"command\":\"install\",\"name\":\"$DOMAIN.key\",\"from-url\":\"${config[apache_url]}/$DOMAIN/$DOMAIN.key\"}"'"
+          JSON_KEY="'"{\"command\":\"install\",\"name\":\"$DOMAIN.key\",\"from-url\":\"$DOWNLOAD_URL/$DOMAIN/$DOMAIN.key\"}"'"
           ADD_KEY="$CURL -X POST ${config[f5_url]}/mgmt/tm/sys/crypto/key -d $JSON_KEY"
           eval $ADD_KEY
 
