@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ -z "$1" ] || [ -z "$2" ]; then
-   echo "usage: $0 operation domain"
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+   echo "usage: $0 operation type domain"
    echo "example:"
-   echo "$0 add|replace|remove example.com"
+   echo "$0 [add|replace|remove] [letsencrypt|premium] example.com"
    exit 1
 fi
 
