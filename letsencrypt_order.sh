@@ -78,7 +78,7 @@ if [ -f "$apache_config/vhost.map" ]; then
                                         fi
 
                                         #Upload certificate to F5
-                                        $f5hook add $wanted_cert
+                                        $f5hook add letsencrypt $wanted_cert
                                 fi
                 fi
         done
@@ -116,7 +116,7 @@ if [ -f "$iis_config/applicationHost.config" ]; then
                                         fi
 
                                         #Upload certificate to F5
-                                        $f5hook add $wanted_cert
+                                        $f5hook add letsencrypt $wanted_cert
                                 fi
                 fi
         done
