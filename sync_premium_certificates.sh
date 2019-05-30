@@ -116,7 +116,7 @@ done
 #upload new certificate on F5
 cat "$newcerts_to_upload_f5" | while read line; do
 	echo "OK: Uploading certificate for $line"
-	echo "$f5hook add $line"
+	$f5hook replace premium $line
 done
 
 # Find certificates no more available on shared storage
@@ -129,7 +129,7 @@ cat "$cert_diff" | while read line; do
 	rm -f "$obsolete_cert"
 	echo "OK: removing obsolete certificate bundle for $line from $obsolete_cert"
 	domain=`echo "$line" | cut -d '_' -f1`
-	echo "$f5hook remove $domain"
+	$f5hook remove premium $domain
 	rm -Rf "$f5_download_dir/$domain"
 done
 
